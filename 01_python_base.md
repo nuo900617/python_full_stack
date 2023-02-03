@@ -48,11 +48,70 @@ print(type(v1), type(v2))
   - v2 = v1.encode('utf-8') --- 字节类型 bytes
   - v1 = v2.decode('utf-8') --- 字符串类型 str -> unicode
 
-2. 文件操作
+## 文件
+1. 文件编码
+- 字符串->字节  
+  - 'xx'.encode('utf-8')
+- 字节->字符串
+  - 'xx'.decode('gbk') 
+
+2. 打开文件/操作文件/关闭文件
 ```python
-name = '你好'
-data = name.encode('utf-8')
-f = open('a.txt', mode='wb')
-f.write(data)
+f = open('文件路径', mode='wb/ab')
+f.write('xx'.encode('utf-8'))
+f.flush()
 f.close()
-``` 
+```
+```python
+f = open('文件路径', mode='rb)
+data = f.read()
+f.close()
+content = data.decode('utf-8')
+```
+
+3. 关于模式  
+**mode = 'w'**，encoding='utf-8'时，可以直接写入字符串，内部给做转换
+```python
+f = open('文件路径', mode='w', encoding='utf-8')
+f.write('xx')
+f.close()
+```
+```python
+f = open('文件路径', mode='r', encoding='utf-8')
+content = f.read()
+f.close()
+```
+
+- 如果文档写入的是字符串、文本，建议mode='w'/'r'
+- 图片/视频/gif文件, 建议mode='wb'/'rb'
+
+4. 大文件  
+```python
+f = open('文件路径', mode='r', encoding='utf-8')
+content = f.read()  # 所有内容直接读取到内存
+f.close()
+```
+
+```python
+f = open('文件路径', mode='r', encoding='utf-8')
+# 一行一行的读取文件
+for line in f:
+  line = line.strip()
+  if not line:
+    continue
+  print(line)
+f.close()
+```
+
+- 网络传输大文件
+```python
+import os 
+total_size = os.stat('**.mp4').st_size #获取文件大小
+f = open('**.mp4', mode='rb')
+has_read_size = 0
+while has_read_size < total_size:
+  chunk = f.read(3) # 读3个字节
+  has_read_size += len(chunk)
+
+f.close()
+```
